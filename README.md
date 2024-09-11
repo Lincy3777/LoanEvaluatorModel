@@ -1,2 +1,3 @@
-# LoanEvaluatorModel
-Loan Evaluator Model  is a machine learning-based application designed to predict an individual's creditworthiness. 
+# Loan Evaluator Model
+Loan Evaluator Model  is a machine learning-based application designed to predict an individual's creditworthiness by analyzing various financial and demographic factors. It employs a RandomForestClassifier, chosen for its superior performance when compared to other models like Logistic Regression, Decision Tree, and K-Nearest Neighbors (KNN). RandomForestClassifier demonstrated the highest accuracy during model evaluation, especially given the label-encoded nature of the dataset, making it a more reliable choice. 
+The project integrates a user-friendly graphical interface built using Tkinter, allowing users to input relevant details and receive instant feedback on their credit standing. The model is trained on the German Credit Data (also known as Statlog), sourced from the UCI Machine Learning Repository
