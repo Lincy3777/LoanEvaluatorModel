@@ -1,0 +1,113 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+import tkinter as tk
+from tkinter import messagebox
+
+# Load the Dataset (german.data-numeric)
+column_names = [
+    "Status of existing checking account", "Duration in month", "Credit history", "Purpose",
+    "Credit amount", "Savings account/bonds", "Present employment since", "Installment rate in percentage of disposable income",
+    "Personal status and sex", "Other debtors / guarantors", "Present residence since", "Property",
+    "Age in years", "Other installment plans", "Housing", "Number of existing credits at this bank",
+    "Job", "Number of people being liable to provide maintenance for", "Telephone", "Foreign worker", "Creditability"
+]
+data = pd.read_csv('german.data-numeric', delim_whitespace=True, header=None, names=column_names)
+
+# Split the data into features (X) and target (y)
+X = data.drop("Creditability", axis=1)
+y = data["Creditability"]
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Train the Random Forest Classifier
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
+
+# Evaluate the model
+y_pred = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Model Accuracy: {accuracy * 100:.2f}%")
+
+# Function to predict creditworthiness
+def predict_credit():
+    try:
+        # Collect input data from the GUI
+        input_data = [
+            int(entry_checking_account.get()),
+            int(entry_duration.get()),
+            int(entry_credit_history.get()),
+            int(entry_purpose.get()),
+            int(entry_credit_amount.get()),
+            int(entry_savings.get()),
+            int(entry_employment.get()),
+            int(entry_installment_rate.get()),
+            int(entry_personal_status.get()),
+            int(entry_debtors.get()),
+            int(entry_residence.get()),
+            int(entry_property.get()),
+            int(entry_age.get()),
+            int(entry_installment_plans.get()),
+            int(entry_housing.get()),
+            int(entry_credits.get()),
+            int(entry_job.get()),
+            int(entry_maintenance.get()),
+            int(entry_telephone.get()),
+            int(entry_foreign_worker.get())
+        ]
+        
+        # Debug: Print input data
+        print(f"Input Data: {input_data}")
+        
+        # Predict using the trained model
+        prediction = model.predict([input_data])
+        
+        # Check the model prediction
+        if prediction[0] == 1:
+            messagebox.showinfo("Result", "Creditworthy")
+        else:
+            messagebox.showinfo("Result", "Not Creditworthy")
+    
+    except Exception as e:
+        messagebox.showerror("Error", str(e))
+
+# GUI Setup using Tkinter
+root = tk.Tk()
+root.title("Creditworthiness Predictor")
+
+# Define GUI elements for input
+labels = [
+    "Status of existing checking account", "Duration in month", "Credit history", "Purpose",
+    "Credit amount", "Savings account/bonds", "Present employment since", "Installment rate in percentage of disposable income",
+    "Personal status and sex", "Other debtors / guarantors", "Present residence since", "Property",
+    "Age in years", "Other installment plans", "Housing", "Number of existing credits at this bank",
+    "Job", "Number of people being liable to provide maintenance for", "Telephone", "Foreign worker"
+]
+
+entries = []
+
+for i, label_text in enumerate(labels):
+    label = tk.Label(root, text=label_text, width=40, anchor='w')  # Adjust width here
+    label.grid(row=i, column=0, padx=10, pady=5, sticky=tk.W)
+    
+    entry = tk.Entry(root)
+    entry.grid(row=i, column=1, padx=10, pady=5)
+    entries.append(entry)
+
+# Unpack entries for easier reference
+(
+    entry_checking_account, entry_duration, entry_credit_history, entry_purpose,
+    entry_credit_amount, entry_savings, entry_employment, entry_installment_rate,
+    entry_personal_status, entry_debtors, entry_residence, entry_property,
+    entry_age, entry_installment_plans, entry_housing, entry_credits,
+    entry_job, entry_maintenance, entry_telephone, entry_foreign_worker
+) = entries
+
+# Add Predict button
+predict_button = tk.Button(root, text="Predict", command=predict_credit)
+predict_button.grid(row=len(labels), column=1, padx=10, pady=20)
+
+# Start the GUI loop
+root.mainloop()
